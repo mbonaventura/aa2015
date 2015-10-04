@@ -37,17 +37,15 @@ Y_data = []
 
 for line in hfile.readlines():
     line_array = line.strip().split(';')
-    X_data.append(line_array[3] + ' ' + line_array[4])
-    
+    this_text = line_array[3] + ' ' + line_array[4]
+    X_data.append(this_text)
     this_class = line_array[2].strip()
-    
-    if (this_class in ('politica', 'internacionales', 'seguridad', 'economia')):
-        this_class = 'resto'
-    if (this_class in ('espectaculos', 'tecnologia', 'sociedad', 'cultura')):
-        this_class = 'resto'
-
+    #if (this_class in ('politica', 'internacionales', 'seguridad', 'economia')):
+    #    this_class = 'resto'
+    #if (this_class in ('espectaculos', 'tecnologia', 'sociedad', 'cultura')):
+    #    this_class = 'resto'
     Y_data.append(this_class)
-
+#
 
 
 
@@ -70,7 +68,7 @@ if vec == 'count':
 #
 #
 class_names = ['cultura', 'deportes', 'economia', 'espectaculos', 'internacionales', 'politica', 'seguridad', 'sociedad','tecnologia']
-class_names = ['deportes', 'resto']
+#class_names = ['deportes', 'resto']
 
 sum_precision = 0
 sum_recall = 0
