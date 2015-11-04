@@ -21,7 +21,7 @@ from helpers import *
 
 # Get attributes and class for the images
 #x_data, targets_data = getAttributes_surf('./img20/*.jpg')
-x_data, targets_data = getAttributes_colors('./img100/*.jpg')
+x_data, targets_data = getAttributes_colors('./img200/*.jpg')
 
 # Separate in train & test
 X_train, X_test, y_train, y_test = cross_validation.train_test_split(x_data, targets_data, test_size=0.3, random_state=0)
@@ -30,6 +30,8 @@ X_train, X_test, y_train, y_test = cross_validation.train_test_split(x_data, tar
 bestEstimators = gridSearch(X_train, y_train)
 
 # print the result for the best estimators
+bestbest_estimator, bestbest_score = bestEstimators[0]
+bestbest_score = 0
 for estimator, score in bestEstimators:
 	predictions = estimator.predict(X_test)
 
@@ -41,8 +43,17 @@ for estimator, score in bestEstimators:
 	print 'Recall: ', recall_score(y_test, predictions)
 	print 'Accuracy: ', accuracy_score(y_test, predictions)
 	print 'Expected (precision): ', score
-	
 
+	if(bestbest_score < precision_score(y_test, predictions)):
+		bestbest_score = precision_score(y_test, predictions)
+		bestbest_estimator = estimator
+
+
+	
+print("========================================================================================")
+print("========================================================================================")
+print("The very best best estimator is: (Precision %f )" % bestbest_score)
+print(bestbest_estimator)
 
 
 
