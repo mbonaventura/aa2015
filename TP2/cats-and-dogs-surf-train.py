@@ -26,37 +26,45 @@ for f in glob.glob(args.trainingSetPath+'*.jpg'):
 #
 saved_features = {}
 
-if os.path.isfile(args.featuresFileName): 
-	saved_features = json.load(open(args.featuresFileName))
-#
+if os.path.isfile(args.featuresFileName):
+	array = []
+	with open(args.featuresFileName, "r") as fin:
+		for line in fin:
+			data = line.split("\t")
+			k = data[0]
+			saved_features[k] = data[1].strip()
+		#
+	#
 #
 image_features = []
 image_counter = 0
 doSave = 0
 for filename in all_instance_filenames:
 	image_counter+=1
-	imagename = os.path.basename(filename)
-	print 'Processing image: ', image_counter, filename
+	imagename = os.path.basename(filename)	
 	#
 	image_surf_data = []
 	if  imagename in saved_features:
-  		image_surf_data = map(float, saved_features[imagename].split(';'))
+		print 'Image already processed :-) ', image_counter, filename
   	else:
+		print 'Processing image: ', image_counter, filename
 		image = mh.imread(filename, as_grey=True)
-		image_surf_data = surf.surf(image)[:, 5:]
-    	doSave = 1
-	image_features.append(image_surf_data)
-	#
-	all_surf_data = ""
-	for img_sa in image_surf_data:
-		list2str_sa = ';'.join(str(x) for x in img_sa)
-		all_surf_data += list2str_sa + ":"	
-	#
-	#print all_surf_data[:-1]	
-	saved_features[imagename] = all_surf_data[:-1]
-	
-
+		surf_data = surf.surf(image)[:, 5:]
+		doSave = 1
+		#
+		str_surf_data = ""
+		for img_sa in surf_data:
+			#print img_sa 
+			tmp_surf_data = ';'.join(str(x) for x in img_sa)
+			str_surf_data = str_surf_data + tmp_surf_data + ":"
+		saved_features[imagename] = str_surf_data[:-1]
+#
+#
+#
 if (doSave == 1):
-	json.dump(saved_features, open(args.featuresFileName,'w'))
-
-print "Features saved to: " + args.featuresFileName
+	fout = open(args.featuresFileName,'w')
+	for f in saved_features:
+		fout.write(f + "\t" + saved_features[f] + "\n")
+	fout.close()
+	print "Features saved to: " + args.featuresFileName
+#

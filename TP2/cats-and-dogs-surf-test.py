@@ -25,7 +25,14 @@ if (not os.path.isfile(args.featuresFileName)):
 #	
 
 print "Loading from file..."
-saved_features = json.load(open(args.featuresFileName))
+saved_features = {}
+with open(args.featuresFileName, "r") as fin:
+		for line in fin:
+			data = line.split("\t")
+			k = data[0]
+			saved_features[k] = data[1].strip()
+		#
+	#
 #
 #
 image_features = []
@@ -40,7 +47,7 @@ for image in saved_features:
 	#
 	surf_data = []
 	surf_lists = saved_features[image].split(":")
-	for sl in surf_lists:		
+	for sl in surf_lists:
 		this_data = map(float, sl.split(';'))
 		surf_data.append(this_data)
 	#	
