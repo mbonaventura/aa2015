@@ -3,6 +3,7 @@ import sys
 import json
 import glob
 import argparse
+import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import *
 from sklearn.cluster import MiniBatchKMeans
@@ -37,15 +38,39 @@ for image in saved_features:
 	all_instance_filenames.append(image)
 	all_instance_targets.append(target)
 	#
-	hist = []
-	hist = map(float, saved_features[image].split(';'))
-  	image_features.append(hist)
+	surf_data = []
+	surf_lists = saved_features[image].split(":")
+	for sl in surf_lists:		
+		this_data = map(float, sl.split(';'))
+		surf_data.append(this_data)
+	#	
+	image_features.append(surf_data)
 #
 print image_counter, " images loaded..."
 #
+
+X_train_surf_features = np.concatenate(image_features)
+
+# Clusters
+n_clusters = 300
+print 'Clustering', len(X_train_surf_features), 'features'
+estimator = MiniBatchKMeans(n_clusters=n_clusters)
+estimator.fit_transform(X_train_surf_features)
+
+x_data = []
+for instance in image_features:
+	clusters = estimator.predict(instance)
+	features = np.bincount(clusters)
+	if len(features) < n_clusters:
+		features = np.append(features, np.zeros((1, n_clusters-len(features))))
+	#
+	x_data.append(features)
+
+
+#
 #train_len = int(len(all_instance_filenames) * .70)
-#X_train	= image_features[:train_len]
-#X_test  = image_features[train_len:]
+#X_train	= x_data[:train_len]
+#X_test  = x_data[train_len:]
 #print "Using ", train_len, " images to train the models" 
 #
 #y_train = all_instance_targets[:train_len]
@@ -60,10 +85,11 @@ clf = RandomForestClassifier(max_depth=5, n_estimators=20, max_features=1)
 #clf = SVC(gamma=2, C=1)
 #clf = GaussianNB()
 
-scores = cross_validation.cross_val_score(clf, image_features, all_instance_targets, cv=5)
+scores = cross_validation.cross_val_score(clf, x_data, all_instance_targets, cv=5)
 print ""
 print "CV Scores....: ", scores
 print "CV Mean score: ", sum(scores)/(len(scores)*1.0)
+
 
 #---------------------------------------------------------
 # Por si queremos testear sin CV
