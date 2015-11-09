@@ -36,9 +36,10 @@ if os.path.isfile(args.featuresFileName):
 		#
 	#
 #
-image_features = []
 image_counter = 0
-doSave = 0
+
+fout = open(args.featuresFileName,'w')
+
 for filename in all_instance_filenames:
 	image_counter+=1
 	imagename = os.path.basename(filename)	
@@ -46,6 +47,7 @@ for filename in all_instance_filenames:
 	image_surf_data = []
 	if  imagename in saved_features:
 		print 'Image already processed :-) ', image_counter, filename
+		fout.write(imagename + "\t" + saved_features[imagename] + "\n")
   	else:
 		print 'Processing image: ', image_counter, filename
 		image = mh.imread(filename, as_grey=True)
@@ -57,14 +59,10 @@ for filename in all_instance_filenames:
 			#print img_sa 
 			tmp_surf_data = ';'.join(str(x) for x in img_sa)
 			str_surf_data = str_surf_data + tmp_surf_data + ":"
-		saved_features[imagename] = str_surf_data[:-1]
-#
-#
-#
-if (doSave == 1):
-	fout = open(args.featuresFileName,'w')
-	for f in saved_features:
-		fout.write(f + "\t" + saved_features[f] + "\n")
-	fout.close()
-	print "Features saved to: " + args.featuresFileName
+		#
+		fout.write(imagename + "\t" + str_surf_data + "\n")
+	#
+#		
+fout.close()
+print "Features saved to: " + args.featuresFileName
 #

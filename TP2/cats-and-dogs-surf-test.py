@@ -48,8 +48,11 @@ for image in saved_features:
 	surf_data = []
 	surf_lists = saved_features[image].split(":")
 	for sl in surf_lists:
-		this_data = map(float, sl.split(';'))
-		surf_data.append(this_data)
+		sl = sl.strip()
+		if (sl != ""):
+			#print "*", sl, "*"
+			this_data = map(float, sl.split(';'))
+			surf_data.append(this_data)
 	#	
 	image_features.append(surf_data)
 #
@@ -74,6 +77,22 @@ for instance in image_features:
 	x_data.append(features)
 
 
+
+
+#-------------------------------------------------------------------------------
+# Dimension reduction!
+from sklearn import decomposition
+
+pca = decomposition.RandomizedPCA(n_components=10, whiten=True)
+pca.fit(x_data)
+x_train_pca = pca.transform(x_data)
+x_data = x_train_pca
+
+
+
+
+
+
 #
 #train_len = int(len(all_instance_filenames) * .70)
 #X_train	= x_data[:train_len]
@@ -85,10 +104,10 @@ for instance in image_features:
 #
 #
 #clf = tree.DecisionTreeClassifier()
-clf = RandomForestClassifier(max_depth=5, n_estimators=20, max_features=1)
+#clf = RandomForestClassifier(max_depth=5, n_estimators=20, max_features=1)
 #clf = RandomForestClassifier()												
 #clf = AdaBoostClassifier()
-#clf = SVC(kernel="linear", C=0.025)
+clf = SVC(kernel="linear", C=0.025)	#Kernel: linear, poly, rbf
 #clf = SVC(gamma=2, C=1)
 #clf = GaussianNB()
 

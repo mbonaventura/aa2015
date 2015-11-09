@@ -4,9 +4,11 @@ import json
 import glob
 import argparse
 import cv2
-from skimage.feature import local_binary_pattern
-from scipy.stats import itemfreq
-from sklearn.preprocessing import normalize
+import mahotas.features
+
+#from skimage.feature import local_binary_pattern
+#from scipy.stats import itemfreq
+#from sklearn.preprocessing import normalize
 #
 parser = argparse.ArgumentParser()
 parser.add_argument("-t", "--trainingSetPath", help="Path to Training Set", required="True")
@@ -40,19 +42,12 @@ for filename in all_instance_filenames:
 	if  imagename in saved_features:
   		hist = map(float, saved_features[imagename].split(';'))
   	else:
-		im = cv2.imread(filename)						# Read the image
-		im_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)	# Convert to grayscale as LBP works on grayscale image
-		radius = 3
-		no_points = 8 * radius							# Number of points to be considered as neighbourers
-		lbp = local_binary_pattern(im_gray, no_points, radius, method='uniform')	# Uniform LBP is used
-		x = itemfreq(lbp.ravel())						# Calculate the histogram
-		hist = x[:, 1]/sum(x[:, 1])						# Normalize the histogram
+		image = mahotas.imread(filename, as_grey=False)
+		features = mahotas.features.haralick(image).mean(0)
     	doSave = 1
-	#
-	#
-	saved_features[imagename] = ';'.join(str(x) for x in hist)
+    #
+	saved_features[imagename] = ';'.join(str(x) for x in features)
 
 if (doSave == 1):
 	json.dump(saved_features, open(args.featuresFileName,'w'))
-
-print "Features saved to: " + args.featuresFileName
+	print "Features saved to: " + args.featuresFileName
