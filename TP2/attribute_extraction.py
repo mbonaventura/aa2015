@@ -1,4 +1,6 @@
 import sys
+import os
+import json
 import numpy as np
 import glob
 import cv2
@@ -14,7 +16,35 @@ from sklearn.naive_bayes import GaussianNB
 import mahotas as mh
 from mahotas.features import surf
 
-def getAttributes_colors(filePattern):
+
+def readAttributesFile(fileName):
+	if (not os.path.isfile(fileName)): 
+		print fileName+ " doesn't exist!"
+		sys.exit
+
+	print "Loading from file %s..." % fileName
+	saved_features = json.load(open(fileName))
+	
+	# Extract class(target) & attributes(features) from the file
+	image_features = []
+	image_targets = []
+	for image in saved_features:
+		# extract target
+		target = 1 if 'cat' in image else 0		
+		image_targets.append(target)
+		
+		# extract features
+		features = map(float, saved_features[image].split(';'))
+	  	image_features.append(features)
+	
+	print "%i images loaded." % len(image_targets)
+	return image_features, image_targets
+
+def getAttributes_hara():
+	return readAttributesFile('./img200/hara-attributes.train')
+	
+
+def processAttributes_colors(filePattern):
 	all_instance_filenames = []
 	targets_data = []
 	for f in glob.glob(filePattern):
@@ -36,7 +66,7 @@ def getAttributes_colors(filePattern):
 
 	return x_data, targets_data
 
-def getAttributes_surf(filePattern):
+def processAttributes_surf(filePattern):
 	targets_data = []
 	surf_features = []
 	counter = 0

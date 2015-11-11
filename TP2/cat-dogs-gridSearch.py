@@ -1,38 +1,39 @@
 import sys
 import numpy as np
 from sklearn import cross_validation
-from sklearn.svm import SVC
-from sklearn.grid_search import GridSearchCV
-from sklearn.metrics import classification_report
 
-#import mahotas as mh
-#from mahotas.features import surf
-#from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import *
-#from sklearn.cluster import MiniBatchKMeans
-import glob
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, BaggingClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn import tree
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
-#from sklearn.svm import SVC
-#from sklearn.naive_bayes import GaussianNB
-import cv2
-from helpers import *
 
+from sklearn.metrics import classification_report
+from sklearn.metrics import *
+import glob
+import cv2
+from attribute_extraction import *
+from classifier_search import *
 
 # Get attributes and class for the images
 #x_data, targets_data = getAttributes_surf('./img20/*.jpg')
-x_data, targets_data = getAttributes_colors('./img200/*.jpg')
+#x_data, targets_data = getAttributes_colors('./img200/*.jpg')
+x_data, targets_data = getAttributes_hara()
 
 # Separate in train & test
 X_train, X_test, y_train, y_test = cross_validation.train_test_split(x_data, targets_data, test_size=0.3, random_state=0)
 
 #Perform a grid search to find best method and parameters
-bestEstimators = gridSearch(X_train, y_train)
+print("We will start training with %i images. Each image with %i attributes." % (len(y_train), len(X_train[0])))
+raw_input('Press any key to continue:')
+bestEstimators = gridSearch(X_train, y_train, -1)
+
+
+print("Training finished. Found %i estimators." % len(bestEstimators))
+raw_input('Press any key to show the report for each estimator:')
 
 # print the result for the best estimators
 bestbest_estimator, bestbest_score = bestEstimators[0]
 bestbest_score = 0
-for estimator, score in bestEstimators:
+for estimator, predictedScore in bestEstimators:
 	predictions = estimator.predict(X_test)
 
 	print("")
@@ -42,7 +43,7 @@ for estimator, score in bestEstimators:
 	print 'Precision: ', precision_score(y_test, predictions)
 	print 'Recall: ', recall_score(y_test, predictions)
 	print 'Accuracy: ', accuracy_score(y_test, predictions)
-	print 'Expected (precision): ', score
+	print 'Predicted score: ', predictedScore
 
 	if(bestbest_score < precision_score(y_test, predictions)):
 		bestbest_score = precision_score(y_test, predictions)
