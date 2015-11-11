@@ -22,17 +22,11 @@ saved_features = {}
 if (not os.path.isfile(args.featuresFileName)): 
 		print args.featuresFileName + " doesn't exist!"
 		sys.exit
-#	
+#
+
 
 print "Loading from file..."
-saved_features = {}
-with open(args.featuresFileName, "r") as fin:
-		for line in fin:
-			data = line.split("\t")
-			k = data[0]
-			saved_features[k] = data[1].strip()
-		#
-	#
+saved_features = json.load(open(args.featuresFileName))
 #
 #
 image_features = []
@@ -45,69 +39,29 @@ for image in saved_features:
 	all_instance_filenames.append(image)
 	all_instance_targets.append(target)
 	#
-	surf_data = []
-	surf_lists = saved_features[image].split(":")
-	for sl in surf_lists:
-		sl = sl.strip()
-		if (sl != ""):
-			#print "*", sl, "*"
-			this_data = map(float, sl.split(';'))
-			surf_data.append(this_data)
-	#	
-	image_features.append(surf_data)
-#
-print image_counter, " images loaded..."
-#
-
-X_train_surf_features = np.concatenate(image_features)
-
-# Clusters
-n_clusters = 300
-print 'Clustering', len(X_train_surf_features), 'features'
-estimator = MiniBatchKMeans(n_clusters=n_clusters)
-estimator.fit_transform(X_train_surf_features)
-
-x_data = []
-for instance in image_features:
-	clusters = estimator.predict(instance)
-	features = np.bincount(clusters)
-	if len(features) < n_clusters:
-		features = np.append(features, np.zeros((1, n_clusters-len(features))))
-	#
-	x_data.append(features)
-
+	hist = []
+	hist = map(float, saved_features[image].split(';'))
+  	image_features.append(hist)
 
 
 
 #-------------------------------------------------------------------------------
 # Dimension reduction!
-from sklearn import decomposition
-
-pca = decomposition.RandomizedPCA(n_components=10, whiten=True)
-pca.fit(x_data)
-x_train_pca = pca.transform(x_data)
-x_data = x_train_pca
-
-
-
-
-
-
+#from sklearn import decomposition
 #
-#train_len = int(len(all_instance_filenames) * .70)
-#X_train	= x_data[:train_len]
-#X_test  = x_data[train_len:]
-#print "Using ", train_len, " images to train the models" 
-#
-#y_train = all_instance_targets[:train_len]
-#y_test  = all_instance_targets[train_len:]
-#
+#pca = decomposition.RandomizedPCA(n_components=10, whiten=True)
+#pca.fit(x_data)
+#x_train_pca = pca.transform(x_data)
+#x_data = x_train_pca
+
+x_data = image_features
+
 #
 #clf = tree.DecisionTreeClassifier()
-#clf = RandomForestClassifier(max_depth=5, n_estimators=20, max_features=1)
+clf = RandomForestClassifier(max_depth=5, n_estimators=100, max_features=2) #5,100,2 -> 0.63
 #clf = RandomForestClassifier()												
 #clf = AdaBoostClassifier()
-clf = SVC(kernel="linear", C=0.025)	#Kernel: linear, poly, rbf
+#clf = SVC(kernel="linear", C=0.025)	#Kernel: linear, poly, rbf
 #clf = SVC(gamma=2, C=1)
 #clf = GaussianNB()
 
