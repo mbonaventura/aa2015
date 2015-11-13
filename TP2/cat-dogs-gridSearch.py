@@ -11,14 +11,15 @@ from attribute_extraction import *
 from classifier_search import *
 
 #### PARAMETERS  ######
+threads = 20
 featureSet = 'surf-c100' # 'bp-r5' 'hara-img200'
 
 # FEW estimators
-estimators = ['GaussianNB'] 
+#estimators = ['GaussianNB'] 
 # SOME estimators
 #estimators = ['GaussianNB', 'AdaBoost', 'Bagging', 'RandomForest'] #'SVC',
 # ALL estimators
-#estimators = ['GradientBoosting', 'ExtraTrees', 'Bagging', 'RandomForest', 'LogisticRegression', 'DecisionTree', 'AdaBoost', 'GaussianNB', 'SVC'] 
+estimators = ['GradientBoosting', 'ExtraTrees', 'Bagging', 'RandomForest', 'LogisticRegression', 'DecisionTree', 'AdaBoost', 'GaussianNB', 'SVC'] 
 
 
 # Get attributes and class for the images
@@ -31,7 +32,7 @@ X_train, X_test, y_train, y_test = cross_validation.train_test_split(x_data, tar
 #Perform a grid search to find best method and parameters
 print("We will start training with %i images. Each image with %i attributes." % (len(y_train), len(X_train[0])))
 #raw_input('Press any key to continue:')
-bestEstimators = gridSearch(X_train, y_train, estimators, featureSet, 4)
+bestEstimators = gridSearch(X_train, y_train, estimators, featureSet, threads)
 
 print("Training finished. Found %i estimators for featureSet '%s'." % (len(bestEstimators), featureSet))
 #raw_input('Press any key to show the report for each estimator:')
