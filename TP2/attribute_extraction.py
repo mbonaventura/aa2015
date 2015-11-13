@@ -16,7 +16,15 @@ from sklearn.naive_bayes import GaussianNB
 import mahotas as mh
 from mahotas.features import surf
 
-
+files = {}
+files["hara-img200"] = './img200/hara-attributes.train'
+files["lbp-r3"] = './features/features-lbp-r3.json'
+files["lbp-r5"] = './features/features-lbp-r5.json'
+files["surf-c50"] = './features/features-surf.json-c50.json'
+files["surf-c100"] = './features/features-surf.json-c100.json'
+files["surf-c200"] = './features/features-surf.json-c200.json'
+files["surf-c300"] = './features/features-surf.json-c300.json'
+	
 def readAttributesFile(fileName):
 	if (not os.path.isfile(fileName)): 
 		print fileName+ " doesn't exist!"
@@ -40,9 +48,9 @@ def readAttributesFile(fileName):
 	print "%i images loaded." % len(image_targets)
 	return image_features, image_targets
 
-def getAttributes_hara():
-	return readAttributesFile('./img200/hara-attributes.train')
-	
+def getAttributes(method):
+	return readAttributesFile(files[method])
+
 
 def processAttributes_colors(filePattern):
 	all_instance_filenames = []

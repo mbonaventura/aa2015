@@ -2,59 +2,44 @@ import sys
 import numpy as np
 from sklearn import cross_validation
 
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, BaggingClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn import tree
-
 from sklearn.metrics import classification_report
 from sklearn.metrics import *
+from sklearn.ensemble import VotingClassifier
 import glob
 import cv2
 from attribute_extraction import *
 from classifier_search import *
 
+#### PARAMETERS  ######
+featureSet = 'surf-c100' # 'bp-r5' 'hara-img200'
+
+# FEW estimators
+estimators = ['GaussianNB'] 
+# SOME estimators
+#estimators = ['GaussianNB', 'AdaBoost', 'Bagging', 'RandomForest'] #'SVC',
+# ALL estimators
+#estimators = ['GradientBoosting', 'ExtraTrees', 'Bagging', 'RandomForest', 'LogisticRegression', 'DecisionTree', 'AdaBoost', 'GaussianNB', 'SVC'] 
+
+
 # Get attributes and class for the images
-#x_data, targets_data = getAttributes_surf('./img20/*.jpg')
-#x_data, targets_data = getAttributes_colors('./img200/*.jpg')
-x_data, targets_data = getAttributes_hara()
+x_data, targets_data = getAttributes(featureSet)
+#x_data, targets_data = getAttributes('hara-img200')
 
 # Separate in train & test
-X_train, X_test, y_train, y_test = cross_validation.train_test_split(x_data, targets_data, test_size=0.3, random_state=0)
+X_train, X_test, y_train, y_test = cross_validation.train_test_split(x_data, targets_data, test_size=0.2, random_state=0)
 
 #Perform a grid search to find best method and parameters
 print("We will start training with %i images. Each image with %i attributes." % (len(y_train), len(X_train[0])))
-raw_input('Press any key to continue:')
-bestEstimators = gridSearch(X_train, y_train, -1)
+#raw_input('Press any key to continue:')
+bestEstimators = gridSearch(X_train, y_train, estimators, featureSet, 4)
 
+print("Training finished. Found %i estimators for featureSet '%s'." % (len(bestEstimators), featureSet))
+#raw_input('Press any key to show the report for each estimator:')
 
-print("Training finished. Found %i estimators." % len(bestEstimators))
-raw_input('Press any key to show the report for each estimator:')
+# call the next script to load results
+print("")
+os.system("python savedEstimators.py")
 
-# print the result for the best estimators
-bestbest_estimator, bestbest_score = bestEstimators[0]
-bestbest_score = 0
-for estimator, predictedScore in bestEstimators:
-	predictions = estimator.predict(X_test)
-
-	print("")
-	print("Testing %s with TEST data:" % estimator)		    
-	print("========================================================================================")
-	print classification_report(y_test, predictions)
-	print 'Precision: ', precision_score(y_test, predictions)
-	print 'Recall: ', recall_score(y_test, predictions)
-	print 'Accuracy: ', accuracy_score(y_test, predictions)
-	print 'Predicted score: ', predictedScore
-
-	if(bestbest_score < precision_score(y_test, predictions)):
-		bestbest_score = precision_score(y_test, predictions)
-		bestbest_estimator = estimator
-
-
-	
-print("========================================================================================")
-print("========================================================================================")
-print("The very best best estimator is: (Precision %f )" % bestbest_score)
-print(bestbest_estimator)
 
 
 
