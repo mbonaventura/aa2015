@@ -11,13 +11,13 @@ from attribute_extraction import *
 from classifier_search import *
 
 #### PARAMETERS  ######
-threads = 20
+threads = 1
 featureSet = 'surf-c100' # 'bp-r5' 'hara-img200'
 
 # FEW estimators
-estimators = ['RandomForest'] 
+estimators = ['GaussianNB'] 
 # SOME estimators
-estimators = ['RandomForest', 'LogisticRegression', 'DecisionTree', 'AdaBoost', 'GaussianNB', 'SVC']
+#estimators = ['RandomForest', 'LogisticRegression', 'DecisionTree', 'AdaBoost', 'GaussianNB', 'SVC']
 # ALL estimators
 #estimators = ['GradientBoosting', 'ExtraTrees', 'Bagging', 'RandomForest', 'LogisticRegression', 'DecisionTree', 'AdaBoost', 'GaussianNB', 'SVC'] 
 

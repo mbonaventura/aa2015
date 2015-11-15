@@ -17,6 +17,25 @@ import mahotas as mh
 from mahotas.features import surf
 from sklearn.externals import joblib
 
+
+def saveGridSearchResults(gridSearchResult, directory):
+	saveEstimator(gridSearchResult.best_estimator_, gridSearchResult.best_score_, directory)
+
+	estimatorName = ("%s" % gridSearchResult.best_estimator_).split('(')[0]
+	baseFileName = os.path.join(directory, estimatorName)
+
+	#save all scores
+	with open("%s.grid_results" % baseFileName, "w") as text_file:
+		text_file.write("Best parameters: %s\n" % gridSearchResult.best_estimator_)
+		text_file.write("\tBest score (%s): %s\n" % ("Precision", gridSearchResult.best_score_))
+		text_file.write("")
+
+		text_file.write("Grid scores on development set:\n")
+		text_file.write("\n")
+
+		for params, mean_score, grid_scores in gridSearchResult.grid_scores_:
+			text_file.write("%0.3f (+/-%0.03f) for %r\n" % (mean_score, grid_scores.std() * 2, params))
+
 def saveEstimator(estimator, score, directory):
 	if not os.path.exists(directory):
 		print("created directory: %s " % directory)	
@@ -27,11 +46,11 @@ def saveEstimator(estimator, score, directory):
 
 	#save score
 	with open("%s.score" % baseFileName, "w") as text_file:
-		text_file.write("%f" % score)	
+		text_file.write("%f\n" % score)	
 
 	# write estimator paramas	
 	with open("%s.params" % baseFileName, "w") as text_file:
-		text_file.write("%s" % estimator)
+		text_file.write("%s\n" % estimator)
 
 	#save estimator
 	joblib.dump(estimator, "%s.pkl" % baseFileName) 
@@ -78,7 +97,7 @@ def gridSearch(X_train, y_train, estimators, featureSet, n_jobs=1):
 		    bestEstimators.append((clf.best_estimator_, clf.best_score_))
 
 		    # save estimator
-		    saveEstimator(clf.best_estimator_, clf.best_score_, './estimators/%s' % featureSet)  
+		    saveGridSearchResults(clf, './estimators/%s' % featureSet)  
 
 		    print("\tBest parameters: %s" % clf.best_estimator_)
 		    print("\tBest score (%s): %s" % (scoreName, clf.best_score_))	
@@ -103,16 +122,16 @@ def getSearch(estimatorName):
 	                    )
 	estimators["RandomForest"] = (
 								   RandomForestClassifier(), 
-						           [{'n_estimators': [20], 'max_features': ['auto', 5, 20, 100], 'max_depth': [10, 50, 100, 300]}]
+						           [{'n_estimators': [5, 20, 100], 'max_features': ['auto', 5, 20, 100], 'max_depth': [10, 50, 100, 300]}]
 						           #[{'n_estimators': [20], 'max_features': ['auto', 5, 20, 100, 200], 'max_depth': [10, 100, 300]}]
 						         )
 	estimators["ExtraTrees"] = (
 								ExtraTreesClassifier(),
-								[{'n_estimators': [1, 5, 10],  'max_features':['auto', 1, 5, 10], 'max_depth': [None, 5, 10], 'min_samples_split':[1], 'random_state':[0]}]
+								[{'n_estimators': [5, 20, 100],  'max_features':['auto', 1, 5, 10], 'max_depth': [None, 5, 10], 'min_samples_split':[1], 'random_state':[0]}]
 							)
 	estimators["LogisticRegression"] = (
 								   			LogisticRegression(), 
-						           			[{'penalty': ['l2'], 'C': [0.001, 0.01, 0.005, 0.0005]}]
+						           			[{'penalty': ['l2'], 'C': [0.001, 0.01, 0.005, 0.0005, 0.0001]}]
 						         		)
 	estimators["DecisionTree"] = (
 								   tree.DecisionTreeClassifier(), 
