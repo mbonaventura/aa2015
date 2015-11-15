@@ -17,9 +17,9 @@ featureSet = 'surf-c100' # 'bp-r5' 'hara-img200'
 # FEW estimators
 #estimators = ['GaussianNB'] 
 # SOME estimators
-#estimators = ['GaussianNB', 'AdaBoost', 'Bagging', 'RandomForest'] #'SVC',
+estimators = ['RandomForest', 'LogisticRegression', 'DecisionTree', 'AdaBoost', 'GaussianNB', 'SVC']
 # ALL estimators
-estimators = ['GradientBoosting', 'ExtraTrees', 'Bagging', 'RandomForest', 'LogisticRegression', 'DecisionTree', 'AdaBoost', 'GaussianNB', 'SVC'] 
+#estimators = ['GradientBoosting', 'ExtraTrees', 'Bagging', 'RandomForest', 'LogisticRegression', 'DecisionTree', 'AdaBoost', 'GaussianNB', 'SVC'] 
 
 
 # Get attributes and class for the images
