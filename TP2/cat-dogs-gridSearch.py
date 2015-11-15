@@ -15,7 +15,7 @@ threads = 20
 featureSet = 'surf-c100' # 'bp-r5' 'hara-img200'
 
 # FEW estimators
-#estimators = ['GaussianNB'] 
+estimators = ['RandomForest'] 
 # SOME estimators
 estimators = ['RandomForest', 'LogisticRegression', 'DecisionTree', 'AdaBoost', 'GaussianNB', 'SVC']
 # ALL estimators
