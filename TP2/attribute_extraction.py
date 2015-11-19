@@ -18,12 +18,22 @@ from mahotas.features import surf
 
 files = {}
 files["hara-img200"] = './img200/hara-attributes.train'
+files["hara"] = './features/features-hara.json'
+files["hara-norm"] = './features/features-hara.json.norm'
+files["color"] = './features/features-colorhist.json'
+files["color-norm"] = './features/features-colorhist.json.norm'
+files["grayhist"] = './features/features-grayhist.json'
+files["grayhist-norm"] = './features/features-grayhist.json.norm'
 files["lbp-r3"] = './features/features-lbp-r3.json'
 files["lbp-r5"] = './features/features-lbp-r5.json'
 files["surf-c50"] = './features/features-surf.json-c50.json'
 files["surf-c100"] = './features/features-surf.json-c100.json'
 files["surf-c200"] = './features/features-surf.json-c200.json'
 files["surf-c300"] = './features/features-surf.json-c300.json'
+files["surf-c50-norm"] = './features/features-surf.json-c50.json.norm'
+files["surf-c100-norm"] = './features/features-surf.json-c100.json.norm'
+files["surf-c200-norm"] = './features/features-surf.json-c200.json.norm'
+files["surf-c300-norm"] = './features/features-surf.json-c300.json.norm'
 	
 def readAttributesFile(fileName):
 	if (not os.path.isfile(fileName)): 
