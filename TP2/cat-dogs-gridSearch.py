@@ -9,10 +9,16 @@ import glob
 import cv2
 from attribute_extraction import *
 from classifier_search import *
+import argparse
 
 #### PARAMETERS  ######
-threads = 1
-featureSet = 'surf-c100' # 'bp-r5' 'hara-img200'
+parser = argparse.ArgumentParser()
+parser.add_argument("-t", "--threads", help="Numbers to use in the grid search", required="True")
+parser.add_argument("-f", "--featureName", help="Features To use", required="True")
+args = parser.parse_args()
+
+threads = int(args.threads)
+featureSet =  args.featureName #'surf-c100' # 'bp-r5' 'hara-img200'
 
 # FEW estimators
 estimators = ['GaussianNB'] 
