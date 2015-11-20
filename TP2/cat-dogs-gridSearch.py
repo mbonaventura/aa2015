@@ -9,17 +9,36 @@ import glob
 import cv2
 from attribute_extraction import *
 from classifier_search import *
+import argparse
 
 #### PARAMETERS  ######
-threads = 1
-featureSet = 'surf-c100' # 'bp-r5' 'hara-img200'
+parser = argparse.ArgumentParser()
+parser.add_argument("-t", "--threads", help="Numbers to use in the grid search", required="True")
+parser.add_argument("-f", "--featureName", help="Features to use", required="True")
+parser.add_argument("-e", "--estimators", help="estimators to use", required="True")
+args = parser.parse_args()
+
+threads = int(args.threads)
+featureSet =  args.featureName #'surf-c100' # 'bp-r5' 'hara-img200'
 
 # FEW estimators
-estimators = ['GaussianNB'] 
-# SOME estimators
-#estimators = ['RandomForest', 'LogisticRegression', 'DecisionTree', 'AdaBoost', 'GaussianNB', 'SVC']
-# ALL estimators
-#estimators = ['GradientBoosting', 'ExtraTrees', 'Bagging', 'RandomForest', 'LogisticRegression', 'DecisionTree', 'AdaBoost', 'GaussianNB', 'SVC'] 
+estimators = []
+if args.estimators == "few":
+	estimators = ['GaussianNB'] 
+elif args.estimators == "some":
+	# SOME estimators
+	estimators = ['RandomForest', 'LogisticRegression', 'DecisionTree', 'AdaBoost', 'GaussianNB']
+elif args.estimators == "all":
+	# ALL estimators
+	estimators = ['GradientBoosting', 'ExtraTrees', 'Bagging', 'RandomForest', 'LogisticRegression', 'DecisionTree', 'AdaBoost', 'GaussianNB', 'SVC'] 
+else :
+	print "ERROR -e must be 'few', 'some' or 'all'."
+	sys.exit()
+
+
+print "Starting to run for features:'%s' with %i threads" % (featureSet, threads)
+print "Estimators: " , estimators
+print "==============================================================="
 
 
 # Get attributes and class for the images

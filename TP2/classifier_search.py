@@ -122,7 +122,7 @@ def getSearch(estimatorName):
 	                    )
 	estimators["RandomForest"] = (
 								   RandomForestClassifier(), 
-						           [{'n_estimators': [5, 20, 100], 'max_features': ['auto', 5, 20, 100], 'max_depth': [10, 50, 100, 300]}]
+						           [{'n_estimators': [5, 20, 100], 'max_features': ['auto', 5, 20, 100], 'max_depth': [10, 50, 100]}]
 						           #[{'n_estimators': [20], 'max_features': ['auto', 5, 20, 100, 200], 'max_depth': [10, 100, 300]}]
 						         )
 	estimators["ExtraTrees"] = (
