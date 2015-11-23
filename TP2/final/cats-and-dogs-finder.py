@@ -186,7 +186,7 @@ for imagename in image_targets:
 	#	
 	if (args.featuresLbp != ""):	# Extraer lbp (sobre la misma imagen del anterior, en escala de grises)
 		radius = 3
-		points = 8 * radius							# Number of points to be considered as neighbourers
+		points = 4 * radius							# Number of points to be considered as neighbourers
 		lbp_hist = lbp.lbp(image, radius, points, ignore_zeros=False)
 		lbp_features[imagename] = lbp_hist
 	#
