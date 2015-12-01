@@ -17,7 +17,9 @@ featureSet = 'surf-c300-norm' # 'bp-r5' 'hara-img200'
 x_data, targets_data = getAttributes(featureSet)
 
 # Separate in train & test
-X_train, X_test, y_train, y_test = cross_validation.train_test_split(x_data, targets_data, test_size=0.2, random_state=0)
+#X_train, X_test, y_train, y_test = cross_validation.train_test_split(x_data, targets_data, test_size=0.2, random_state=0)
+X_train = x_data
+y_train = targets_data
 
 # create the estimators with corresponding parameters
 estimators = []
@@ -37,26 +39,27 @@ scores.append(0.709)
 voting = VotingClassifier(estimators=estimators, voting='hard');
 print "Starting to train VotingClassifier"
 voting.fit(X_train, y_train)
-voting_prediction = voting.predict(X_test)
-
-print("")
-print("Testing VOTING 'hard' with TEST data:")		    
-print("========================================================================================")
-print classification_report(y_test, voting_prediction)
-print 'Precision: ', precision_score(y_test, voting_prediction)
-print 'Recall: ', recall_score(y_test, voting_prediction)
-print 'Accuracy: ', accuracy_score(y_test, voting_prediction)
-saveEstimator(voting, precision_score(y_test, voting_prediction), './estimators/%s_votingHard' % featureSet) 
+#voting_prediction = voting.predict(X_test)
+#
+#print("")
+#print("Testing VOTING 'hard' with TEST data:")		    
+#print("========================================================================================")
+#print classification_report(y_test, voting_prediction)
+#print 'Precision: ', precision_score(y_test, voting_prediction)
+#print 'Recall: ', recall_score(y_test, voting_prediction)
+#print 'Accuracy: ', accuracy_score(y_test, voting_prediction)
+saveEstimator(voting, 1, './estimators/final_surf300_hard') 
 
 voting = VotingClassifier(estimators=estimators, voting='soft', weights=scores);
 voting.fit(X_train, y_train)
-voting_prediction = voting.predict(X_test)
+#voting_prediction = voting.predict(X_test)
 
-print("")
-print("Testing VOTING 'soft' with TEST data:")		    
-print("========================================================================================")
-print classification_report(y_test, voting_prediction)
-print 'Precision: ', precision_score(y_test, voting_prediction)
-print 'Recall: ', recall_score(y_test, voting_prediction)
-print 'Accuracy: ', accuracy_score(y_test, voting_prediction)
-saveEstimator(voting, precision_score(y_test, voting_prediction), './estimators/%s_votingSoft' % featureSet) 
+#print("")
+#print("Testing VOTING 'soft' with TEST data:")		    
+#print("========================================================================================")
+#print classification_report(y_test, voting_prediction)
+#print 'Precision: ', precision_score(y_test, voting_prediction)
+#print 'Recall: ', recall_score(y_test, voting_prediction)
+#print 'Accuracy: ', accuracy_score(y_test, voting_prediction)
+#saveEstimator(voting, precision_score(y_test, voting_prediction), './estimators/%s_votingSoft' % featureSet) 
+saveEstimator(voting, 1, './estimators/final_surf300_soft') 
