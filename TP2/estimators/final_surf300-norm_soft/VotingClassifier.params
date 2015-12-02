@@ -1,0 +1,7 @@
+VotingClassifier(estimators=[('LogisticRegression', LogisticRegression(C=0.005, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,
+          penalty='l2', random_state=None, solver='liblinear', tol=0.0001,
+          verbose=0, warm_start=False...n_jobs=1,
+            oob_score=False, random_state=None, verbose=0,
+            warm_start=False))],
+         voting='soft', weights=[0.774, 0.758, 0.728, 0.718, 0.709])
