@@ -26,7 +26,7 @@ estimators = []
 scores = []
 estimators.append(('LogisticRegression', LogisticRegression(penalty='l2', C=0.005))) # expected 0.774
 scores.append(0.774)
-estimators.append(('SVC', SVC(kernel='rbf', C=100, gamma=0.001))) # expected 0.758
+estimators.append(('SVC', SVC(kernel='rbf', C=100, gamma=0.001, probability=True))) # expected 0.758
 scores.append(0.758)
 estimators.append(('GradientBoostingClassifier', GradientBoostingClassifier(n_estimators=150, loss='deviance', learning_rate=0.1, max_depth=3))) # expected 0.728
 scores.append(0.728)
@@ -50,8 +50,8 @@ voting.fit(X_train, y_train)
 #print 'Accuracy: ', accuracy_score(y_test, voting_prediction)
 saveEstimator(voting, 1, './estimators/final_surf300_hard') 
 
-voting = VotingClassifier(estimators=estimators, voting='soft', weights=scores);
-voting.fit(X_train, y_train)
+#voting = VotingClassifier(estimators=estimators, voting='soft', weights=scores);
+#voting.fit(X_train, y_train)
 #voting_prediction = voting.predict(X_test)
 
 #print("")
@@ -62,4 +62,4 @@ voting.fit(X_train, y_train)
 #print 'Recall: ', recall_score(y_test, voting_prediction)
 #print 'Accuracy: ', accuracy_score(y_test, voting_prediction)
 #saveEstimator(voting, precision_score(y_test, voting_prediction), './estimators/%s_votingSoft' % featureSet) 
-saveEstimator(voting, 1, './estimators/final_surf300_soft') 
+#saveEstimator(voting, 1, './estimators/final_surf300_soft') 
