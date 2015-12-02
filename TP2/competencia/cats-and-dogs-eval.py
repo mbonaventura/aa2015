@@ -166,15 +166,34 @@ print 'Training... '
 #	clf2 = GradientBoosting(100)
 #	clf3 = Logistic(C=1e5)
 #	y voting soft
-
 #
 #------------------------------------------------------------------------------------------------------------------
 #clf1 = RandomForestClassifier(max_depth=5, n_estimators=20, max_features=1)
-clf1 = RandomForestClassifier(max_depth=100, n_estimators=100, max_features=20)
-clf2 = GradientBoostingClassifier(n_estimators=100, loss='deviance', learning_rate=0.1, max_depth=10)	# Sacado de la tablita de Grid_Search
-clf3 = linear_model.LogisticRegression(C=0.005, penalty='l2')						# Sacado de la tablita de Grid_Search
+#clf1 = RandomForestClassifier(max_depth=100, n_estimators=100, max_features=20)
+#clf2 = GradientBoostingClassifier(n_estimators=100, loss='deviance', learning_rate=0.1, max_depth=10)	# Sacado de la tablita de Grid_Search
+#clf3 = linear_model.LogisticRegression(C=0.005, penalty='l2')						# Sacado de la tablita de Grid_Search
 #------------------------------------------------------------------------------------------------------------------
-eclf1 = VotingClassifier(estimators=[('rf', clf1), ('svm', clf2), ('gb', clf3)], voting='soft')
+#eclf1 = VotingClassifier(estimators=[('rf', clf1), ('svm', clf2), ('gb', clf3)], voting='soft')
+
+# create the estimators with corresponding parameters
+estimators = []
+scores = []
+estimators.append(('LogisticRegression', LogisticRegression(penalty='l2', C=0.005))) # expected 0.774
+scores.append(0.774)
+estimators.append(('SVC', SVC(kernel='rbf', C=100, gamma=0.001, probability=True))) # expected 0.758
+scores.append(0.758)
+estimators.append(('GradientBoostingClassifier', GradientBoostingClassifier(n_estimators=150, loss='deviance', learning_rate=0.1, max_depth=3))) # expected 0.728
+scores.append(0.728)
+estimators.append(('BaggingClassifier', BaggingClassifier(max_features=0.5, max_samples=0.5, base_estimator=KNeighborsClassifier()))) # expected 0.718
+scores.append(0.718)
+estimators.append(('RandomForestClassifier', RandomForestClassifier(max_features=100, n_estimators=100, max_depth=100))) # expected 0.709
+scores.append(0.709)
+
+# Voting
+eclf1 = VotingClassifier(estimators=estimators, voting='hard');
+#eclf1 = VotingClassifier(estimators=estimators, voting='soft', weights=scores);
+
+
 eclf1 = eclf1.fit(X_train, y_train)
 
 print 'Testing... '
